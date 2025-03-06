@@ -1,16 +1,15 @@
-#include <SPI.h>
 #include "Arduino.h"
-#include "nRF24L01.h"
 #include "RF24.h"
+#include "nRF24L01.h"
+#include <SPI.h>
 
-RF24 radio(4, 5); 
+RF24 radio(4, 5);
 
 const uint64_t adresse = 0x1111111111;
 const int taille = 32;
-char message[taille + 1]; 
+char message[taille + 1];
 
-void setup(void)
-{
+void setup(void) {
   Serial.begin(115200);
   Serial.println("Recepteur RF24");
   radio.begin();
@@ -18,11 +17,9 @@ void setup(void)
   radio.startListening();
 }
 
-void loop(void)
-{
-  while ( radio.available() )
-  {
-    radio.read( message, taille );
+void loop(void) {
+  while (radio.available()) {
+    radio.read(message, taille);
     Serial.print("Message recu : ");
     Serial.println(message);
   }
