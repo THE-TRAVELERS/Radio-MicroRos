@@ -3,27 +3,35 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-int compteur = 0;
-
 RF24 radio(4, 5);
-const uint64_t addresse = 0x1111111111;
-const int taille = 32;
-char message[taille + 1];
+const uint64_t adresse = 0x1111111111;
 
-void setup(void) {
+// Define a struct with two int8_t variables
+struct DataPacket {
+  int8_t value1;
+  int8_t value2;
+};
+
+void setup() {
   Serial.begin(115200);
-  Serial.println("Emetteur de donnees");
+  Serial.println("Émetteur RF24");
   radio.begin();
-  radio.openWritingPipe(addresse);
+  radio.openWritingPipe(adresse);
 }
 
-void loop(void) {
-  compteur++;
-  itoa(compteur, message, 10);
-  Serial.print("J'envoie maintenant "); // pour débogage
-  Serial.println(message);
+void loop() {
+  static int8_t compteur1 = 0;
+  static int8_t compteur2 = 100; // Example values
 
-  radio.write(message, taille); // émission du message via nRF24L01
+  DataPacket data = {compteur1++,
+                     compteur2--}; // Increment and decrement values
+
+  Serial.print("Envoi: ");
+  Serial.print(data.value1);
+  Serial.print(", ");
+  Serial.println(data.value2);
+
+  radio.write(&data, sizeof(data)); // Send struct data
 
   delay(5000);
 }
